@@ -3,3 +3,6 @@ __pycache__/
 .venv/
 .env
 .ipynb_checkpoints/
+# Local-only manual validation files; not part of the Git distribution.
+/notebooks/AI_Search_OneLake検証.ipynb
+/notebooks/AI_Search_OneLake検証.py

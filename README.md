@@ -10,15 +10,15 @@ PDFをチャンク分割して取り込んだ場合は、1ファイルに対応�
 
 | 用途 | GitHubでコードを読む | Fabricで使用する |
 |---|---|---|
-| 手動でID特定・指定ID削除を検証 | [手動検証用Python版](./notebooks/AI_Search_OneLake検証.py) | [手動検証Notebook](./notebooks/AI_Search_OneLake検証.ipynb) |
 | Activatorから削除イベントを受信 | [イベント連携用Python版](./notebooks/AI_Search_OneLakeイベント連携.py) | [イベント連携Notebook](./notebooks/AI_Search_OneLakeイベント連携.ipynb) |
 | UDF | [function_app.py](./udf/function_app.py) | ファイル全体をUDFエディターに貼り付け |
 | 外部ライブラリ | [requirements.txt](./requirements.txt) | Fabric Environment／UDFのLibrary managementへ登録 |
 
-Notebookは**実行用の`.ipynb`と閲覧用の`.py`を併記**しています。Python版には`# %%`でコードセル、`# %% [markdown]`で説明セルを区切っているため、GitHubのNotebookプレビューに依存せず読めます。
+Gitで配布するイベント連携Notebookは**実行用の`.ipynb`と閲覧用の`.py`を併記**しています。Python版には`# %%`でコードセル、`# %% [markdown]`で説明セルを区切っているため、GitHubのNotebookプレビューに依存せず読めます。
 
 - Python版は隣のNotebookから生成した閲覧用コピーです。`%pip`等のIPythonコマンドはコメント化しています。
 - Fabricへのインポートには`.ipynb`を使用してください。Python版だけでは、パラメーターセル等のNotebookメタデータは復元できません。
+- 手動のID特定・指定ID削除を試す`AI_Search_OneLake検証.ipynb`と、その閲覧用`.py`はGit配布対象外です。ローカル検証用として保持し、Gitには追加しないでください。
 - 各NotebookとUDFは共通処理を内包しており、別のPythonモジュールをFabricへアップロードする必要はありません。
 - このリポジトリには、インデックス等のリソース作成コード、検証PDF、記事原稿は含めていません。既存インデックスへの取り込みが完了した環境で使用します。
 - 公開ファイルの接続情報はプレースホルダーです。実行結果やシークレット値は含めていません。
@@ -88,30 +88,9 @@ AI SearchのAPIバージョンは共通処理の`SearchProbe`で`2025-09-01`を�
 
 ## Notebookを使用する
 
-### 手動でIDを特定・削除する
+### 手動でIDを特定・削除する（ローカル検証用）
 
-1. [手動検証Notebook](./notebooks/AI_Search_OneLake検証.ipynb)をダウンロードし、Fabricにインポートします。
-2. 依存ライブラリを設定します。手動検証用には`%pip`セルもあります。
-3. 共通設定と以下の検索設定を編集します。
-4. スキーマ確認セルでキー・パスフィールドを確認し、ID特定セルを実行します。
-5. `found["document_ids"]`と`found["documents"]`のパス・ファイル名・件数を確認します。
-6. 削除するIDだけを`DOCUMENT_IDS`へコピーし、`DRY_RUN = True`で削除前状態を確認します。
-7. 実削除する場合だけ`DRY_RUN = False`にし、`CONFIRMATION = "DELETE <index名> <重複除去後のID数>"`を設定します。
-
-| 設定名 | 既定値 | 説明 |
-|---|---|---|
-| `WORKSPACE` | `YOUR-WORKSPACE-ID` | 相対パスを使用する際のワークスペースID |
-| `LAKEHOUSE` | `YOUR-LAKEHOUSE-ID` | 相対パスを使用する際のLakehouse ID |
-| `PATH_FIELD` | `metadata_storage_path` | 元ファイルの保存パスフィールド |
-| `SOURCE` | `Files/Documents/sample.pdf` | 対象の相対パス、HTTPS Blob／DFS URL、またはABFSS URL |
-| `SCOPE` | `file` | ファイル完全一致。`directory`は指定フォルダー配下全体（再帰的） |
-| `MAX_SCAN` | `1000` | 照合する検索ドキュメント行数上限。1～10,000 |
-| `EXACT_FILTER` | `False` | 通常はFalse。Trueは単一ファイルのみ、保存URLそのものを完全一致フィルターで検索 |
-| `DOCUMENT_IDS` | `[]` | 明示的な削除対象ID。空のままでは削除セルはAPIを呼ばない |
-| `DRY_RUN` | `True` | Trueは削除前確認のみ。Falseで削除と削除後確認 |
-| `CONFIRMATION` | `""` | 実削除の確認文字列。例：`DELETE idx-onelake-udf 2` |
-
-完全なURLを使う場合、`WORKSPACE`と`LAKEHOUSE`は不要です。`EXACT_FILTER = True`では、保存済みのURLとホスト・URLエンコードを含めて同一の`SOURCE`を指定し、パスフィールドをfilterable・normalizerなしにする必要があります。イベント処理ではこの完全一致フィルターを使いません。
+手動検証用NotebookはGitHubから配布していません。必要な場合は、ローカルに保持している`AI_Search_OneLake検証.ipynb`を使用してください。Fabricへのインポート前に共通設定を確認し、既定の`DRY_RUN = True`で削除対象を確認してください。実削除を行う場合は、対象IDと確認文字列を設定してから実行します。
 
 ### Activator連携Notebook
 
