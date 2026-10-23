@@ -1,0 +1,2 @@
+# sync-AISearch-documents-onelake
+OneLakeのファイル削除イベントをトリガーとして、AISearchのドキュメントを削除するノートブック及びユーザーデータ関数
